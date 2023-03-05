@@ -1,15 +1,15 @@
-import { Elve } from "./elves";
+import type { Elve } from './elves'
 
 export class Player {
-  public id?: number;
+  public id?: number
 
-  public name?: string;
+  public name?: string
 
   /** 拥有精灵 */
-  public elves?: Elve[];
+  public elves?: Elve[]
 
   /** 背包精灵 */
-  public bagElves?: Elve[];
+  public bagElves?: Elve[]
 
   /** 装备 */
   // equipment: any;
@@ -18,9 +18,9 @@ export class Player {
   // props: any[]
 
   /** 当前精灵 */
-  public currentElve?: Elve;
+  public currentElve?: Elve
 
   constructor(id: number) {
-    this.id = id;
+    this.id = id
   }
 }
