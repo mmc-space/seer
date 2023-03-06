@@ -1,8 +1,22 @@
 import type { Player } from './player'
-import type { Skill } from './skill'
+import type { Effect, SkillId, SkillTarget } from './skill'
+import { Skill } from './skill'
 
 import { MAX_ELVE_LVEVL } from '@/data/config'
 
+export type ElveID = number
+
+type Buff = Record<
+  keyof Required<
+    Pick<Elve, 'ap' | 'ad' | 'armor' | 'magicResistance' | 'hitRate'>
+  >,
+  number
+>
+
+// 修改属性
+export type Attribute = Partial<Pick<Elve, 'hp'> & Buff>
+
+/** 精灵 */
 export class Elve {
   /** hp */
   public hp = 0
@@ -29,10 +43,10 @@ export class Elve {
   public name?: string
 
   /** id */
-  public id?: number
+  public id?: ElveID
 
   /** 技能栏中的技能 */
-  public skills?: Skill[] = []
+  public skills: Skill[] = []
 
   /** 可以学习的技能列表 */
   public learnableSkills: Skill[] = []
@@ -56,36 +70,45 @@ export class Elve {
   public canLearnSkill = true
 
   /** buff */
-  public buff?: Record<
-    keyof Required<
-      Pick<Elve, 'ap' | 'ad' | 'armor' | 'magicResistance' | 'hitRate'>
-    >,
-    number
-  >
+  public buff?: Buff
 
-  constructor(id: number) {
+  constructor(id: ElveID) {
     this.getElveDetailsById(id)
   }
 
   /** 获取精灵详情 */
-  public getElveDetailsById(id: number) {
+  public getElveDetailsById(id: ElveID) {
     this.hp = 1000
     this.ad = 100
     this.ap = 100
+    this.armor = 50
+    this.magicResistance = 50
     this.id = id
+    const skill = new Skill(31)
+    this.skills = [skill, skill, skill]
   }
 
   /**
    * 使用技能
    * @param skillId 技能id
-   * @param self 已方
-   * @param target 对方
+   * @param self 已方玩家
+   * @param target 对方玩家
    */
-  public useSkill(skillId: number, self: Player, target: Player) {
+  public useSkill(skillId: SkillId, self: Player, target: Player) {
     const skill = this.skills?.find(({ id }) => id === skillId)
     if (!skill) throw new Error('not found skill')
 
-    skill?.use(self, target)
+    // 技能可能会影响自己的所有精灵或者对方的所有精灵，而且还可能有持续时间，在指定某个回合生效的效果
+
+    // 目标精灵
+    const targetCharSet: Record<SkillTarget, Elve[]> = {
+      self: [self.currentElve!],
+      enemy: [target.currentElve!],
+      allies: self.elves?.filter(elve => elve !== null) ?? [],
+      enemies: target.elves?.filter(elve => elve !== null) ?? [],
+    }
+    const targets: Elve[] = targetCharSet[skill.target]
+    skill?.use(self.currentElve!, targets)
 
     return skill
   }
@@ -93,7 +116,11 @@ export class Elve {
   /**
    * 更新精灵属性
    */
-  public updateAttribute() {}
+  public updateAttribute(effect: Effect[]) {
+    // 升级、进化、强化、AI自定义属性
+    // const { hp } = attribute
+    console.log(effect)
+  }
 
   /**
    * 进化精灵
@@ -113,15 +140,16 @@ export class Elve {
     if (!this.canLearnSkill) return
 
     // 如果当前级别在 learnableSkills 数组中可以学习新技能 则学习
-    const newSkill = this.learnableSkills?.find(skill => this.level >= skill.needLevel && !skill.isLearned)
+    const newSkill = this.learnableSkills?.find(
+      skill => this.level >= skill.needLevel && !skill.isLearned,
+    )
 
     // 判断是否学习了最高等级技能
-    const maxLearnLevel = this.learnableSkills.at(-1)?.needLevel ?? MAX_ELVE_LVEVL
-    if (this.level >= maxLearnLevel)
-      this.canLearnSkill = false
+    const maxLearnLevel
+      = this.learnableSkills.at(-1)?.needLevel ?? MAX_ELVE_LVEVL
+    if (this.level >= maxLearnLevel) this.canLearnSkill = false
 
-    if (newSkill)
-      newSkill.isLearned = true
+    if (newSkill) newSkill.isLearned = true
   }
 
   /** 升级
@@ -130,7 +158,10 @@ export class Elve {
   public levelUp(exp: number) {
     // 根据传入的经验值计算可以提升多少级
     let levelGain = 0
-    while (this.exp + exp >= this.getExpNeededForLevel(this.level + levelGain + 1) && this.level + levelGain < MAX_ELVE_LVEVL)
+    while (
+      this.exp + exp >= this.getExpNeededForLevel(this.level + levelGain + 1)
+      && this.level + levelGain < MAX_ELVE_LVEVL
+    )
       levelGain += 1
 
     for (let i = 0; i < levelGain; i++) {
@@ -147,5 +178,15 @@ export class Elve {
   /** 根据前等级计算升到下一级所需的经验值 */
   public getExpNeededForLevel(level: number) {
     return level * 0.78
+  }
+
+  /** 增益 */
+  public addBuff = () => {
+
+  }
+
+  /** 减益 */
+  public addDeBuff = () => {
+
   }
 }

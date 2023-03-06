@@ -1,8 +1,15 @@
-import { GamePage } from './pages/game'
+import { RouterProvider } from 'react-router-dom'
+
+import { Suspense } from 'react'
+
+import router from '@/router'
+import 'uno.css'
 
 function App() {
   return <div className="App">
-    <GamePage />
+    <Suspense fallback={<h1>loading...</h1>}>
+      <RouterProvider router={router} />
+    </Suspense>
   </div>
 }
 

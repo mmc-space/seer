@@ -22,7 +22,9 @@
     "@types/react-dom": "^18.0.8",
     "@vitejs/plugin-react": "^2.2.0",
     "eslint": "^8.29.0",
+    "react-router-dom": "^6.8.2",
     "typescript": "^4.6.4",
+    "unocss": "^0.50.4",
     "vite": "^3.2.3",
     "vite-plugin-eslint": "^1.8.1"
   }

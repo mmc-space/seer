@@ -1,4 +1,4 @@
-import type { Elve } from './elves'
+import { Elve } from './elves'
 
 export class Player {
   public id?: number
@@ -22,5 +22,6 @@ export class Player {
 
   constructor(id: number) {
     this.id = id
+    this.currentElve = new Elve(31)
   }
 }

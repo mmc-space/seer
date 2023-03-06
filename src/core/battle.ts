@@ -1,5 +1,10 @@
 import type { Player } from './player'
 
+/** 对战日志 */
+interface BattleLog {
+
+}
+
 enum GameStatus {
   /** 运行中 */
   running,
@@ -14,22 +19,23 @@ export class Battle {
   private player2?: Player
 
   /** 当前玩家 */
-  private currentPlayer?: Player
+  public currentPlayer?: Player
   /** 等待玩家 */
-  private waitPlayer?: Player
+  public waitPlayer?: Player
   /** 获胜方 */
-  private winner?: Player
+  public winner?: Player
   /** 游戏状态 */
-  private gameStatus?: GameStatus
+  public gameStatus = GameStatus.running
   /** 当前回合数 */
-  private currentRound?: number
+  public currentRound = 0
+  /** 日志 */
+  public logs: BattleLog[] = []
 
   constructor(player1: Player, player2: Player) {
     this.player1 = player1
     this.player2 = player2
-    this.gameStatus = GameStatus.running
-    this.currentRound = 0
     this.currentPlayer = this.randomPriority(player1, player2)
+    this.currentRound = 0
     this.waitPlayer
       = this.currentPlayer === this.player1 ? this.player2! : this.player1!
   }
@@ -59,9 +65,9 @@ export class Battle {
   }
 
   /** 轮转回合 */
-  public takeTurn(skillId: number) {
+  public takeTurn = (skillId: number) => {
     /** 回合数+1 */
-    this.currentRound! += 1
+    this.currentRound += 1
 
     // 释放技能
     const skill = this.currentPlayer?.currentElve?.useSkill(
@@ -69,6 +75,8 @@ export class Battle {
       this.currentPlayer!,
       this.waitPlayer!,
     )
+
+    this.createLog()
 
     console.log(
       `当前玩家: ${
@@ -85,8 +93,9 @@ export class Battle {
     this.checkGameStatus()
 
     // 切换当前玩家
-    this.currentPlayer
-      = this.currentPlayer === this.player1 ? this.player2 : this.player1
+    const swap = this.currentPlayer
+    this.currentPlayer = this.waitPlayer
+    this.waitPlayer = swap
   }
 
   /** 对战开始 */
@@ -99,4 +108,19 @@ export class Battle {
 
   //   console.log("Game over!");
   // }
+
+  /** 投降 */
+  public surrender(player: Player) {
+    if (player === this.player1) this.winner = this.player2
+    else this.winner = this.player1
+
+    this.gameStatus = GameStatus.end
+
+    console.log('')
+  }
+
+  /** 生成对战日志 */
+  public createLog() {
+    // this.logs.push()
+  }
 }
