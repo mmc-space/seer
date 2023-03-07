@@ -86,6 +86,7 @@ export class Elve {
     this.id = id
     const skill = new Skill(31)
     this.skills = [skill, skill, skill]
+    this.name = '毛虫兽'
   }
 
   /**

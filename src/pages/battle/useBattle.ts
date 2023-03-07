@@ -32,7 +32,7 @@ export const useBattle = (
   }
 
   useEffect(() => {
-    console.log(battle, countdown, formattedRes)
+    console.log(battle)
     // 更新ui
   }, [round])
 

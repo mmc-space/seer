@@ -85,6 +85,7 @@ export class Skill {
     this.id = id
     this.harm = 100
     this.skillType = SkillType.AD
+    this.desc = '获得了金钱的力量'
   }
 
   /**

@@ -7,7 +7,7 @@ const player = new Player(31)
 const MockSkills = [skill, skill, skill, skill]
 
 const BattlePage = () => {
-  const { round, useSkill } = useBattle(player)
+  const { round, useSkill, logs } = useBattle(player)
 
   const handleUseSkill = (skillId: number) => {
     useSkill(skillId)
@@ -17,6 +17,12 @@ const BattlePage = () => {
     <div>
       <p>当前回合: {round}</p>
       <p>HP: {player.currentElve?.hp}</p>
+      {/* logs */}
+      <ul>
+        {
+          logs.map((log, index) => <li key={index}>{log}</li>)
+        }
+      </ul>
       {/* skills */}
       <ul className="flex">
         {

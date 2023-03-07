@@ -1,9 +1,7 @@
 import type { Player } from './player'
 
 /** 对战日志 */
-interface BattleLog {
-
-}
+type BattleLog = string
 
 enum GameStatus {
   /** 运行中 */
@@ -76,18 +74,7 @@ export class Battle {
       this.waitPlayer!,
     )
 
-    this.createLog()
-
-    console.log(
-      `当前玩家: ${
-        this.currentPlayer === this.player1 ? 'player1' : 'player2'
-      }'`,
-      `当前回合数: ${this.currentRound}`,
-      `当前精灵: ${this.currentPlayer?.currentElve}`,
-      `使用技能: ${skill?.name}`,
-      `当前精灵血量: ${this.currentPlayer?.currentElve?.hp}`,
-      `对方精灵血量: ${this.waitPlayer?.currentElve?.hp}`,
-    )
+    this.createLog(`${this.currentPlayer?.currentElve?.name} 使用了 ${skill?.name} ${skill!.desc!}`)
 
     // 检查状态
     this.checkGameStatus()
@@ -97,17 +84,6 @@ export class Battle {
     this.currentPlayer = this.waitPlayer
     this.waitPlayer = swap
   }
-
-  /** 对战开始 */
-  // public start() {
-  //   console.log("Game started!");
-
-  //   while (this.gameStatus === GameStatus.running) {
-  //     this.takeTurn();
-  //   }
-
-  //   console.log("Game over!");
-  // }
 
   /** 投降 */
   public surrender(player: Player) {
@@ -120,7 +96,8 @@ export class Battle {
   }
 
   /** 生成对战日志 */
-  public createLog() {
-    // this.logs.push()
+  public createLog = (content: string) => {
+    const log = `[${this.currentRound}] - ${content}`
+    this.logs.push(log)
   }
 }
