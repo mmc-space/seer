@@ -1,16 +1,16 @@
 import { useBattle } from './useBattle'
-import { Skill } from '@/core/skill'
+import type { Skill } from '@/core/skill'
 import { Player } from '@/core/player'
+import { BattleLog } from '@/components/BattleLog'
+import { Skills } from '@/components/Skills'
 
-const skill = new Skill(31)
 const player = new Player(31)
-const MockSkills = [skill, skill, skill, skill]
 
 const BattlePage = () => {
   const { round, useSkill, logs } = useBattle(player)
 
-  const handleUseSkill = (skillId: number) => {
-    useSkill(skillId)
+  const handleUseSkill = (skill: Skill) => {
+    useSkill(skill)
   }
 
   return (
@@ -18,24 +18,9 @@ const BattlePage = () => {
       <p>当前回合: {round}</p>
       <p>HP: {player.currentElve?.hp}</p>
       {/* logs */}
-      <ul>
-        {
-          logs.map((log, index) => <li key={index}>{log}</li>)
-        }
-      </ul>
+      <BattleLog logs={logs} />
       {/* skills */}
-      <ul className="flex">
-        {
-          MockSkills.map((skill, index) => (
-            <li key={`${skill.id}-${index}`} className="flex-1" onClick={() => handleUseSkill(skill.id!)}>
-              <p>{skill.skillType}</p>
-              <p>{skill.name}</p>
-              <p>次数{skill.usedTimes} / {skill.times}</p>
-              <p>威力{skill.harm}</p>
-            </li>
-          ))
-        }
-      </ul>
+      <Skills skills={player.currentElve?.skills ?? []} handleUseSkill={handleUseSkill} />
     </div>
   )
 }

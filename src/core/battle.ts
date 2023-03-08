@@ -1,7 +1,13 @@
 import type { Player } from './player'
+import type { Skill } from './skill'
 
 /** 对战日志 */
-type BattleLog = string
+export interface IBattleLog {
+  round: number
+  target: string
+  skillName: string
+  desc?: string
+}
 
 enum GameStatus {
   /** 运行中 */
@@ -27,7 +33,7 @@ export class Battle {
   /** 当前回合数 */
   public currentRound = 0
   /** 日志 */
-  public logs: BattleLog[] = []
+  public logs: IBattleLog[] = []
 
   constructor(player1: Player, player2: Player) {
     this.player1 = player1
@@ -62,19 +68,23 @@ export class Battle {
     return Math.random() > 0.5 ? player1 : player2
   }
 
-  /** 轮转回合 */
-  public takeTurn = (skillId: number) => {
+  /**
+   * 轮转回合
+   * @param skill 技能
+   */
+  public takeTurn = (skill: Skill) => {
     /** 回合数+1 */
     this.currentRound += 1
 
     // 释放技能
-    const skill = this.currentPlayer?.currentElve?.useSkill(
-      skillId,
+    this.currentPlayer?.currentElve?.useSkill(
+      skill,
       this.currentPlayer!,
       this.waitPlayer!,
     )
 
-    this.createLog(`${this.currentPlayer?.currentElve?.name} 使用了 ${skill?.name} ${skill!.desc!}`)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+    this.createLog(this.currentPlayer?.currentElve?.name!, skill?.name!, skill!.desc!)
 
     // 检查状态
     this.checkGameStatus()
@@ -91,13 +101,15 @@ export class Battle {
     else this.winner = this.player1
 
     this.gameStatus = GameStatus.end
-
-    console.log('')
   }
 
   /** 生成对战日志 */
-  public createLog = (content: string) => {
-    const log = `[${this.currentRound}] - ${content}`
-    this.logs.push(log)
+  public createLog = (target: string, skillName: string, desc?: string) => {
+    this.logs.push({
+      round: this.currentRound,
+      target,
+      skillName,
+      desc,
+    })
   }
 }

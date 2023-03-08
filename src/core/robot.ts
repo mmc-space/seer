@@ -3,13 +3,20 @@
 import { Elve } from './elves'
 import { Player } from './player'
 import type { Effect } from './skill'
-import { RobatUserId } from '@/data/config'
+import { RobatUserId } from '@/constants/config'
 
 export class Robot extends Player {
-  constructor(elveId: number, effect?: Effect[]) {
+  constructor(elveIds: number[], effect?: Effect[]) {
     super(RobatUserId)
-    const elve = new Elve(elveId)
-    this.currentElve = elve
-    if (effect) elve.updateAttribute(effect)
+
+    const elves = elveIds.map((elveId) => {
+      const elve = new Elve(elveId)
+      if (effect) elve.updateAttribute(effect)
+
+      return elve
+    })
+
+    this.currentElve = elves[0]
+    this.elves = elves
   }
 }

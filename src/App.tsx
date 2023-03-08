@@ -1,16 +1,20 @@
 import { RouterProvider } from 'react-router-dom'
 
+import type { FC } from 'react'
 import { Suspense } from 'react'
 
-import router from '@/router'
+import { Provider } from './Provider'
+import router from '@/routes'
+
+import '@/styles/base.css'
 import 'uno.css'
 
-function App() {
-  return <div className="App">
+const App: FC = () => {
+  return <Provider>
     <Suspense fallback={<h1>loading...</h1>}>
       <RouterProvider router={router} />
     </Suspense>
-  </div>
+  </Provider>
 }
 
 export default App

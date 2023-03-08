@@ -1,8 +1,10 @@
 import ReactDOM from 'react-dom/client'
 import App from './App'
 
-const root: HTMLElement | null = document.getElementById('root')
+const render = (Component: React.ComponentType) => {
+  const root = document.getElementById('root')
+  if (!root) throw new Error('Mount element not found')
+  ReactDOM.createRoot(root).render(<Component />)
+}
 
-if (root)
-  ReactDOM.createRoot(root).render(<App />)
-
+render(App)

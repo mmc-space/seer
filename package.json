@@ -11,10 +11,11 @@
   },
   "dependencies": {
     "@pixi/react": "^7.0.2",
+    "axios": "^1.2.0",
+    "mobx": "^6.8.0",
     "pixi.js": "^7.1.4",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "zustand": "^4.3.6"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@mmc-cloud/eslint-config": "^1.0.4",

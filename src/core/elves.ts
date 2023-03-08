@@ -1,8 +1,8 @@
 import type { Player } from './player'
-import type { Effect, SkillId, SkillTarget } from './skill'
+import type { Effect, SkillTarget } from './skill'
 import { Skill } from './skill'
 
-import { MAX_ELVE_LVEVL } from '@/data/config'
+import { MAX_ELVE_LVEVL } from '@/constants/config'
 
 export type ElveID = number
 
@@ -91,21 +91,22 @@ export class Elve {
 
   /**
    * 使用技能
-   * @param skillId 技能id
+   * @param skill 技能
    * @param self 已方玩家
    * @param target 对方玩家
    */
-  public useSkill(skillId: SkillId, self: Player, target: Player) {
-    const skill = this.skills?.find(({ id }) => id === skillId)
-    if (!skill) throw new Error('not found skill')
-
+  public useSkill(skill: Skill, self: Player, target: Player) {
     // 技能可能会影响自己的所有精灵或者对方的所有精灵，而且还可能有持续时间，在指定某个回合生效的效果
 
     // 目标精灵
     const targetCharSet: Record<SkillTarget, Elve[]> = {
+      /** 自己 */
       self: [self.currentElve!],
+      /** 对方 */
       enemy: [target.currentElve!],
+      /** 己方全部 */
       allies: self.elves?.filter(elve => elve !== null) ?? [],
+      /** 对方全部 */
       enemies: target.elves?.filter(elve => elve !== null) ?? [],
     }
     const targets: Elve[] = targetCharSet[skill.target]

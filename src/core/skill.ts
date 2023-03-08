@@ -75,6 +75,9 @@ export class Skill {
   /** 目标精灵 '自己' | '敌人' | '盟友' | '敌人们' */
   public target: SkillTarget = 'self'
 
+  /** 是否禁用 */
+  public disabled = false
+
   constructor(id: SkillId) {
     this.id = id
     this.getSkillDetailById(id)
@@ -86,6 +89,7 @@ export class Skill {
     this.harm = 100
     this.skillType = SkillType.AD
     this.desc = '获得了金钱的力量'
+    this.times = 5
   }
 
   /**
@@ -134,14 +138,21 @@ export class Skill {
    * @param self
    * @param targets
    */
-  public use(self: Elve, targets: Elve[]) {
+  public use = (self: Elve, targets: Elve[]) => {
+    if (this.disabled) return
+
     // 对每个目标使用技能
     targets.forEach((target) => {
       // // 更新精灵状态
       const harm = this.getHarm(self, target)
+
+      // todo 更新精灵状态
       // target.updateAttribute(harm)
       console.log(harm)
     })
+
+    // 没有使用次数 禁止
+    if (this.times - ++this.usedTimes <= 0) this.disabled = true
   }
 
   /** 处理待生效状态 */
